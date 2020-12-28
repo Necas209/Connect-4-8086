@@ -4,102 +4,140 @@ ORG 100h
 
 JMP start
 
-    ind_x DB "   A   B   C   D   E   F   G   H$" 
-    ind_y DB "1 $"
+    frame1 DB 201
+    frame2 DB 7 DUP (205, 203)
+    frame3 DB 205, 187, "$"
     
-    L1 DB 4 DUP(6,32)
-    L2 DB 4 DUP(32,6)
-    L3 DB 4 DUP(6,32)
-    L4 DB 8 DUP(32)
-    L5 DB 8 DUP(32)
-    L6 DB 4 DUP(32,4)
-    L7 DB 4 DUP(4,32)
-    L8 DB 4 DUP(32,4)
+    frame4 DB 204
+    frame5 DB 7 DUP (205, 206)
+    frame6 DB 205, 185, "$"
     
+    frame7 DB 200
+    frame8 DB 7 DUP (205, 202)
+    frame9 DB 205, 188, "$"
+    
+    frame10 DB 186
+    frame11 DB 7 DUP (' ', 186)
+    frame12 DB " ", 186,"$"
+    
+    L1 DB 4 DUP (4, 219)
+    L2 DB 4 DUP (219, 4)
+    L3 DB 4 DUP (4, 219)
+    L4 DB 4 DUP (219, 0)
+    L5 DB 4 DUP (0, 219)
+    L6 DB 4 DUP (219, 6)
+    L7 DB 4 DUP (6, 219)
+    L8 DB 4 DUP (219, 6)
+
     nome DB 10 DUP(32)
     
+    perguntar_nome DB "Introduza o nome: $"
+    
     pecas DB 12,12
-    
-    mem DW 03C9h, 04FDh, 0641h, 0775h, 08B9h, 09EDh, 0B31h, 0C65h
-    
+
+    mem DW 01E0h, 31Ch, 0458h, 0594h, 06D0h, 080Ch, 0948h, 0A84h
+
 start:
-   
-    mov ax, 3
-    int 10h          ; modo de video
- 
-    mov ax, 1003h
-    mov bx, 0                      
-    int 10h          ; desativar piscar
- 
+
+    MOV AX, 3
+    INT 10h          ; modo de video
+
+    MOV AX, 1003h
+    MOV BX, 0
+    INT 10h          ; desativar piscar
+
     MOV AX, 0B800h
     MOV ES, AX       ; segmento extra para escrever no ecra
-
-    CALL print_index
+    
+    CALL ask_name
+    
+    CALL CLEAR_SCREEN
 
     CALL print_tab
-    
+
     MOV AX, 4C00h
     INT 21h
 
+
+print_line MACRO addr
+    PUSH AX
+    PUSH DX
+    MOV AH, 9
+    LEA DX, addr
+    INT 21h
+    POP DX
+    POP AX
+ENDM
+
+   
 print_tab PROC
     
+    GOTOXY 2, 2            ;moldura
+    print_line frame1
+    GOTOXY 2, 3
+    print_line frame10
+    
+    MOV AL, 4
+    MOV CX, 7
+    
+    lados:
+    GOTOXY 2, AL
+    print_line frame4
+    INC AL
+    GOTOXY 2, AL
+    print_line frame10 
+    INC AL
+    LOOP lados
+    
+    GOTOXY 2, 18
+    print_line frame7    ;fim da moldura
     
     MOV SI, 0
-    MOV DI, 0
-    MOV BL, 6
+    MOV BP, 0
     MOV CX, 8
-    
-    t:  
+    t:   
+        MOV BX, [mem+BP]  
+        MOV DI, 0
         PUSH CX
-        GOTOXY 6, BL
-        PUSH BX
-        MOV BX, [mem+DI]
         MOV CX, 8
-        l:                 
-            MOV AH, 2
-            MOV DL, [L1+SI]
-            INT 21h
-            
-            PRINT "   "  
-            
-            INC SI  
+        l:  
+            MOV AH, [L1+SI]
+            MOV ES:[BX+DI], AH
+             
+            ADD DI, 4       
+            INC SI
         LOOP l
-        MOV CX, 4
-        l_2:
-             MOV ES:[BX], 1111_0000b
-             ADD BX, 16
-        LOOP l_2
-        POP BX
-        ADD DI, 2
-        ADD BL, 2
+        ADD BP, 2
         POP CX
     LOOP t
-    
+
     RET
 print_tab ENDP
 
- 
-print_index PROC
-    ; imprimir indice A-H 
-    GOTOXY 3, 4 
-
+ask_name PROC
+    GOTOXY 3, 3  
+    
     MOV AH, 9
-    LEA DX, ind_x
+    LEA DX, perguntar_nome
     INT 21h
-    ; imprimir indice 1-8 
-    MOV BX, 0306h
-    MOV CX, 8
-
-    c:
-        GOTOXY BH, BL  
-
-        MOV AH, 9
-        LEA DX, ind_y
-        INT 21h
-  
-        ADD BL, 2 
-        INC [ind_y]
-    LOOP c 
-
+    
+    MOV DI, 0
+    
+    r:
+    MOV AH, 1
+    INT 21h 
+    
+    MOV [nome+DI], AL
+    
+    INC DI
+    
+    CMP AL, 13
+    LOOPNE r
+    
     RET
-print_index ENDP
+ask_name ENDP
+
+
+DEFINE_CLEAR_SCREEN
+
+END start
