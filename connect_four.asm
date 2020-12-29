@@ -2,12 +2,12 @@ include emu8086.inc
 
 JMP start
 
-    linha1 DB 7 DUP(' ')
-    linha2 DB 7 DUP(' ')
-    linha3 DB 7 DUP(' ')
-    linha4 DB 7 DUP(' ')
-    linha5 DB 7 DUP(' ')
-    linha6 DB 7 DUP(' ')   
+    linha1 DB 7 DUP(' ')    ;|      ; 1 -> pecas do p1
+    linha2 DB 7 DUP(' ')    ;|      ; 2 -> pecas do p2
+    linha3 DB 7 DUP(' ')    ;|
+    linha4 DB 7 DUP(' ')    ;|
+    linha5 DB 7 DUP(' ')    ;V
+    linha6 DB 7 DUP(' ')    ;da fila mais baixa para a mais alta
     
       
     frame2 DB 204,205,206,205,206,205,206,205,206,205,206,205,206,205,185,"$"  ;lateral c/ lig    
@@ -29,9 +29,18 @@ JMP start
     
     msg_erro DB "Erro.$"
     
+    last_position DW -1
+    
 DEFINE_CLEAR_SCREEN
     
-                       
+check_horizontal PROC
+    
+    
+    RET
+    
+check_horizontal ENDP
+
+
 start:
     
     MOV AX, 0B800h
@@ -161,11 +170,14 @@ jogada PROC
     loop_jog:
     CMP SI, 42
     JE jog_erro
-    SUB SI, 7  
-    CMP [linha6+BX+SI+7], ' '
+    ADD SI, 7  
+    CMP [linha1+BX+SI-7], ' '
     JNE loop_jog
     
-    LEA DI, [linha6+BX+SI+7]
+    LEA DI, [linha1+BX+SI-7]
+    
+    LEA BX, last_position
+    MOV [BX], DI
     
     CMP turn[0], 0
     JE jogada_p1
@@ -304,9 +316,10 @@ imprimir_moldura:
 imprimir_tabuleiro PROC
 
     MOV BP, 0
-    MOV SI, 0
+    MOV SI, 35
     MOV CX, 6
-    c:
+    c:  
+        PUSH SI
         PUSH CX
         MOV CX, 7
         c2: 
@@ -321,6 +334,8 @@ imprimir_tabuleiro PROC
             INC SI 
         LOOP c2
         POP CX
+        POP SI
+        SUB SI, 7
         ADD BP, 120h 
     LOOP c
     
