@@ -986,8 +986,7 @@ atualizar_tabuleiro PROC
     SUB BL, AL
     
     GOTOXY CL, BL
-    
-    
+        
     MOV AL, turn[0]
     INC AL
     
