@@ -2,27 +2,12 @@ include emu8086.inc
 
 JMP start
 
-MOV AX, 0b800h
-MOV DS, AX
-
-MOV CX, 16 
-MOV SI, 1
-MOV BL, 00h
-teste:
-MOV DS:[SI], BL
-ADD SI, 2
-ADD BL, 10h
-LOOP teste 
-
-RET
-
     linha1 DB 7 DUP(' ')    ;|      ; 1 -> pecas do p1
     linha2 DB 7 DUP(' ')    ;|      ; 2 -> pecas do p2
     linha3 DB 7 DUP(' ')    ;|
     linha4 DB 7 DUP(' ')    ;|
     linha5 DB 7 DUP(' ')    ;V
-    linha6 DB 7 DUP(' ')    ;da fila mais baixa para a mais alta
-    
+    linha6 DB 7 DUP(' ')    ;da fila mais baixa para a mais alta    
       
     frame2 DB 204,205,206,205,206,205,206,205,206,205,206,205,206,205,185,"$"  ;lateral c/ lig    
     frame3 DB 200,205,202,205,202,205,202,205,202,205,202,205,202,205,188,"$"  ;inferior    
@@ -42,12 +27,13 @@ RET
     msg_fim_1 DB "O jogo terminou! O jogador 1 ganhou.$"
     msg_fim_2 DB "O jogo terminou! O jogador 2 ganhou.$"
     
+    msg_empate DB "O jogo terminou em empate!$"
+    
     msg_erro DB "Erro.$"
     
-    last_position DB 2 DUP(-1)     ; posicao da ultima peca colocada
-    
-DEFINE_CLEAR_SCREEN
+    last_position DB 2 DUP(-1)     ; posicao da ultima peca colocada    
 
+DEFINE_CLEAR_SCREEN
 
 start:
     
@@ -72,7 +58,7 @@ start:
     
     CMP AL, 1       ;turn=1 => p2 seguido de p1
     JE p2_p1
-     
+;////////////////////////////////////    
     p1_p2:            
         MOV CX, 3
         loop_inicial12:
@@ -91,7 +77,10 @@ start:
             POP CX    
         LOOP loop_inicial12
         
+        MOV CX, 18
         loop_final12:
+            PUSH CX
+            
             CALL jogada
   
             CALL check_horizontal
@@ -112,9 +101,13 @@ start:
             CALL check_diagonal
             
             LEA BX, turn
-            MOV [BX], 0      
-        JMP loop_final12
-    
+            MOV [BX], 0 
+            
+            POP CX     
+        LOOP loop_final12
+        
+        CALL empate
+;//////////////////////////////////////    
     p2_p1:            
         MOV CX, 3
         loop_inicial21:
@@ -133,7 +126,10 @@ start:
             POP CX    
         LOOP loop_inicial21
         
+        MOV CX, 18
         loop_final21:
+            PUSH CX
+            
             CALL jogada
   
             CALL check_horizontal
@@ -154,10 +150,12 @@ start:
             CALL check_diagonal
             
             LEA BX, turn
-            MOV [BX], 1      
+            MOV [BX], 1
+            
+            POP CX      
         JMP loop_final21    
     
-
+        CALL empate
 ;////////////////////////////////// 
 
 
@@ -174,6 +172,20 @@ RANDSTART:          ; gera numero aleatorio entre 0 e 1
    MOV  AL, DH   
 
 RET
+
+
+empate PROC
+    
+    GOTOXY 20, 8
+    
+    LEA DX, msg_empate
+    MOV AH, 9
+    INT 21h
+    
+    MOV AH, 4C00h
+    INT 21h
+       
+empate ENDP
 
 
 jogada PROC
@@ -269,20 +281,379 @@ check_diagonal PROC
     
     diag_loop1:
         CMP [linha4+SI], AL
-        JNE diag_si
+        JNE diag_cont
         
-        MOV AH, 1
-        JMP diag_cont
+        PUSH CX
+        CALL id_diag
+        POP CX
         
-        diag_si:
-            INC SI
+        diag_cont:  
+        INC SI
     LOOP diag_loop1
     
-    diag_cont:
+    RET
+
+check_diagonal ENDP
+
+id_diag PROC
+    
+    CMP SI, 0
+    JE id0
+    
+    CMP SI, 1
+    JE id1
+    
+    CMP SI, 2
+    JE id2
+    
+    CMP SI, 3
+    JE id3
+    
+    CMP SI, 4
+    JE id4
+    
+    CMP SI, 5
+    JE id5
+    
+    JMP id6
+    
+    id0:
+    CALL diag_1
+    RET
+    
+    id1:
+    CALL diag_2
+    CALL diag_6
+    RET
+    
+    id2:
+    CALL diag_3
+    CALL diag_7
+    
+    id3:
+    CALL diag_4
+    CALL diag_9
+    RET
+    
+    id4:
+    CALL diag_5
+    CALL diag_10
+    RET
+    
+    id5:
+    CALL diag_6
+    CALL diag_11
+    RET
+    
+    id6:
+    CALL diag_12
+    RET
+    
+id_diag ENDP
+
+diag_1 PROC
+    
+    MOV CX, 4
+    MOV SI, 0
+    MOV BX, 0
+
+    d1:
+        CMP [linha1+BX+SI+3], AL
+        JNE fim_d1
+        DEC BX
+        ADD SI, 7
+    LOOP d1
+    
+    CALL FIM_DO_JOGO
+    
+    fim_d1:
+    RET
+       
+diag_1 ENDP
+  
+diag_2 PROC
+       
+    MOV CX, 5
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d2:
+        CMP [linha1+BX+SI+4], AL
+        JE inc_d2
+        MOV AH, 0 
+        JMP cont_d2
+        inc_d2:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d2            
+        cont_d2:
+        ADD SI, 7
+        DEC BX      
+    LOOP d2
     
     RET
     
-check_diagonal ENDP
+    fim_jogo_d2:
+    CALL FIM_DO_JOGO
+    
+diag_2 ENDP
+
+diag_3 PROC
+    
+    MOV CX, 6
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d3:
+        CMP [linha1+BX+SI+5], AL
+        JE inc_d3
+        MOV AH, 0 
+        JMP cont_d3
+        inc_d3:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d3            
+        cont_d3:
+        ADD SI, 7
+        DEC BX      
+    LOOP d3
+    
+    RET
+    
+    fim_jogo_d3:
+    CALL FIM_DO_JOGO
+    
+diag_3 ENDP
+
+diag_4 PROC
+    
+    MOV CX, 6
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d4:
+        CMP [linha1+BX+SI+6], AL
+        JE inc_d4
+        MOV AH, 0 
+        JMP cont_d4
+        inc_d4:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d4            
+        cont_d4:
+        ADD SI, 7
+        DEC BX      
+    LOOP d4
+    
+    RET
+    
+    fim_jogo_d4:
+    CALL FIM_DO_JOGO
+    
+diag_4 ENDP
+
+diag_5 PROC
+    
+    MOV CX, 5
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d5:
+        CMP [linha2+BX+SI+6], AL
+        JE inc_d5
+        MOV AH, 0 
+        JMP cont_d5
+        inc_d5:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d5            
+        cont_d5:
+        ADD SI, 7
+        DEC BX      
+    LOOP d5
+    
+    RET
+    
+    fim_jogo_d5:
+    CALL FIM_DO_JOGO
+    
+diag_5 ENDP
+
+diag_6 PROC
+    
+    MOV CX, 4
+    MOV SI, 0
+    MOV BX, 0
+
+    d6:
+        CMP [linha3+BX+SI+6], AL
+        JNE fim_d6
+        DEC BX
+        ADD SI, 7
+    LOOP d6
+    
+    CALL FIM_DO_JOGO
+    
+    fim_d6:
+    RET
+       
+diag_6 ENDP
+
+diag_7 PROC
+    
+    MOV CX, 4
+    MOV SI, 0
+    MOV BX, 0
+
+    d7:
+        CMP [linha3+BX+SI], AL
+        JNE fim_d7
+        INC BX
+        ADD SI, 7
+    LOOP d7
+    
+    CALL FIM_DO_JOGO
+    
+    fim_d7:
+    RET
+       
+diag_7 ENDP
+
+diag_8 PROC
+       
+    MOV CX, 5
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d8:
+        CMP [linha2+BX+SI], AL
+        JE inc_d8
+        MOV AH, 0 
+        JMP cont_d8
+        inc_d8:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d8            
+        cont_d8:
+        ADD SI, 7
+        INC BX      
+    LOOP d8
+    
+    RET
+    
+    fim_jogo_d8:
+    CALL FIM_DO_JOGO
+    
+diag_8 ENDP
+
+diag_9 PROC
+       
+    MOV CX, 6
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d9:
+        CMP [linha1+BX+SI], AL
+        JE inc_d9
+        MOV AH, 0 
+        JMP cont_d9
+        inc_d9:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d9            
+        cont_d9:
+        ADD SI, 7
+        INC BX      
+    LOOP d9
+    
+    RET
+    
+    fim_jogo_d9:
+    CALL FIM_DO_JOGO
+    
+diag_9 ENDP
+
+diag_10 PROC
+       
+    MOV CX, 6
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d10:
+        CMP [linha1+BX+SI+1], AL
+        JE inc_d10
+        MOV AH, 0 
+        JMP cont_d10
+        inc_d10:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d10            
+        cont_d10:
+        ADD SI, 7
+        INC BX      
+    LOOP d10
+    
+    RET
+    
+    fim_jogo_d10:
+    CALL FIM_DO_JOGO
+    
+diag_10 ENDP
+
+diag_11 PROC
+       
+    MOV CX, 6
+    MOV SI, 0
+    MOV BX, 0
+    MOV AH, 0
+    
+    d11:
+        CMP [linha1+BX+SI+2], AL
+        JE inc_d11
+        MOV AH, 0 
+        JMP cont_d11
+        inc_d11:
+            INC AH
+            CMP AH, 4
+            JE fim_jogo_d11            
+        cont_d11:
+        ADD SI, 7
+        INC BX      
+    LOOP d11
+    
+    RET
+    
+    fim_jogo_d11:
+    CALL FIM_DO_JOGO
+    
+diag_11 ENDP 
+
+diag_12 PROC
+    
+    MOV CX, 4
+    MOV SI, 0
+    MOV BX, 0
+
+    d12:
+        CMP [linha1+BX+SI+3], AL
+        JNE fim_d12
+        INC BX
+        ADD SI, 7
+    LOOP d12
+    
+    CALL FIM_DO_JOGO
+    
+    fim_d12:
+    RET
+       
+diag_12 ENDP
 
 
 check_vertical PROC
