@@ -51,12 +51,12 @@ start:
     CALL RANDSTART  ;escolhe ordem dos jogadores
     
     LEA BX, turn    ;guarda a vez ("turn")
-    MOV [BX], AL
+    MOV [BX], DL
     
-    CMP AL, 0       ;turn=0 => p1 seguido de p2
+    CMP DL, 0       ;turn=0 => p1 seguido de p2
     JE p1_p2
     
-    CMP AL, 1       ;turn=1 => p2 seguido de p1
+    CMP DL, 1       ;turn=1 => p2 seguido de p1
     JE p2_p1
 ;////////////////////////////////////    
     p1_p2:            
@@ -167,9 +167,7 @@ RANDSTART:          ; gera numero aleatorio entre 0 e 1
    MOV  AX, DX
    XOR  DX, DX
    MOV  CX, 2    
-   DIV  CX
-   MOV  AH, 0 
-   MOV  AL, DH   
+   DIV  CX   
 
 RET
 
@@ -182,7 +180,7 @@ empate PROC
     MOV AH, 9
     INT 21h
     
-    MOV AH, 4C00h
+    MOV AX, 4C00h
     INT 21h
        
 empate ENDP
