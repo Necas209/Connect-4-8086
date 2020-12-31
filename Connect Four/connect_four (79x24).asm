@@ -282,7 +282,13 @@ check_diagonal PROC
         JNE diag_cont
         
         PUSH CX
+        PUSH SI
+        PUSH AX
+        
         CALL id_diag
+        
+        POP AX
+        POP SI
         POP CX
         
         diag_cont:  
@@ -321,12 +327,12 @@ id_diag PROC
     
     id1:
     CALL diag_2
-    CALL diag_6
+    CALL diag_7
     RET
     
     id2:
     CALL diag_3
-    CALL diag_7
+    CALL diag_8
     
     id3:
     CALL diag_4
@@ -386,10 +392,14 @@ diag_2 PROC
             CMP AH, 4
             JE fim_jogo_d2            
         cont_d2:
+        CMP CX, 4
+        JLE fim_d2
+        
         ADD SI, 7
         DEC BX      
     LOOP d2
     
+    fim_d2:
     RET
     
     fim_jogo_d2:
@@ -408,6 +418,10 @@ diag_3 PROC
         CMP [linha1+BX+SI+5], AL
         JE inc_d3
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d3
+        
         JMP cont_d3
         inc_d3:
             INC AH
@@ -418,6 +432,7 @@ diag_3 PROC
         DEC BX      
     LOOP d3
     
+    fim_d3:
     RET
     
     fim_jogo_d3:
@@ -436,16 +451,21 @@ diag_4 PROC
         CMP [linha1+BX+SI+6], AL
         JE inc_d4
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d4
+        
         JMP cont_d4
         inc_d4:
             INC AH
             CMP AH, 4
             JE fim_jogo_d4            
-        cont_d4:
+        cont_d4:        
         ADD SI, 7
         DEC BX      
     LOOP d4
     
+    fim_d4:
     RET
     
     fim_jogo_d4:
@@ -464,16 +484,22 @@ diag_5 PROC
         CMP [linha2+BX+SI+6], AL
         JE inc_d5
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d5
+        
         JMP cont_d5
         inc_d5:
             INC AH
             CMP AH, 4
             JE fim_jogo_d5            
         cont_d5:
+        
         ADD SI, 7
         DEC BX      
     LOOP d5
     
+    fim_d5:
     RET
     
     fim_jogo_d5:
@@ -532,6 +558,10 @@ diag_8 PROC
         CMP [linha2+BX+SI], AL
         JE inc_d8
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d8
+        
         JMP cont_d8
         inc_d8:
             INC AH
@@ -542,6 +572,7 @@ diag_8 PROC
         INC BX      
     LOOP d8
     
+    fim_d8:
     RET
     
     fim_jogo_d8:
@@ -560,6 +591,10 @@ diag_9 PROC
         CMP [linha1+BX+SI], AL
         JE inc_d9
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d9
+        
         JMP cont_d9
         inc_d9:
             INC AH
@@ -570,6 +605,7 @@ diag_9 PROC
         INC BX      
     LOOP d9
     
+    fim_d9:
     RET
     
     fim_jogo_d9:
@@ -588,6 +624,10 @@ diag_10 PROC
         CMP [linha1+BX+SI+1], AL
         JE inc_d10
         MOV AH, 0 
+        
+        CMP CX, 4
+        JLE fim_d10
+        
         JMP cont_d10
         inc_d10:
             INC AH
@@ -598,6 +638,7 @@ diag_10 PROC
         INC BX      
     LOOP d10
     
+    fim_d10:
     RET
     
     fim_jogo_d10:
@@ -607,7 +648,7 @@ diag_10 ENDP
 
 diag_11 PROC
        
-    MOV CX, 6
+    MOV CX, 5
     MOV SI, 0
     MOV BX, 0
     MOV AH, 0
@@ -616,6 +657,10 @@ diag_11 PROC
         CMP [linha1+BX+SI+2], AL
         JE inc_d11
         MOV AH, 0 
+         
+        CMP CX, 4
+        JLE fim_d11
+        
         JMP cont_d11
         inc_d11:
             INC AH
@@ -626,6 +671,7 @@ diag_11 PROC
         INC BX      
     LOOP d11
     
+    fim_d11:
     RET
     
     fim_jogo_d11:
