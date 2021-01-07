@@ -136,7 +136,7 @@ coord PROC
     
     SUB AX, 7                ; AX = SI -7
     MOV BL, 7               
-    DIV BL                   ; AX = n.o linha (AL, pois AH = 0)
+    DIV BL                   ; AX = AL = n.o linha (pois AH = 0)
     
     MOV [BP+1], AL           ; y = AL 
     

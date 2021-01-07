@@ -1,5 +1,9 @@
 include emu8086.inc
 
+name "Connect Four"
+
+ORG 100h
+
 JMP start
 
     linha1 DB 7 DUP(' ')    ;|      ; 1 -> pecas do p1
@@ -14,6 +18,9 @@ JMP start
     frame4 DB 186," ",186," ",186," ",186," ",186," ",186," ",186," ",186,"$" ;lateral s/ lig 
 
     turn DB " "      ; vez do jogador: 0 -> p1, 1 -> p2
+    
+    nc DB 7, 0
+    nl DB 6, 0
     
     msg_p1 DB "Jogador 1$"
     msg_p2 DB "Jogador 2$" 
@@ -32,7 +39,10 @@ JMP start
     msg_erro DB "Erro.$"
     
     last_position DB 2 DUP(-1)     ; posicao da ultima peca colocada    
-
+    
+    no_jogadas DB 0
+    jog_max DB 0
+    
 DEFINE_CLEAR_SCREEN
 
 include check.asm
@@ -46,6 +56,11 @@ start:
     MOV AX, 0B800h
     MOV ES, AX
 	
+	MOV AL, [nc]
+    MUL [nl]
+    LEA BX, jog_max
+    MOV [BX], AL
+    
     CALL perguntar_nomes
     
     CALL CLEAR_SCREEN
@@ -65,101 +80,79 @@ start:
     CMP DL, 1       ;turn=1 => p2 seguido de p1
     JE p2_p1
 ;////////////////////////////////////    
-    p1_p2:            
-        MOV CX, 3
-        loop_inicial12:
-            PUSH CX
+    p1_p2:                   
+       loop1_2:
+            CALL jogada                        
+            INC [no_jogadas]
             
-            CALL jogada
-   
-            LEA BX, turn
-            MOV [BX], 1
-    
-            CALL jogada
- 
-            LEA BX, turn
-            MOV [BX], 0
+            CMP [no_jogadas], 7
+            JGE check_hvd
+            JMP not_check
             
-            POP CX    
-        LOOP loop_inicial12
-        
-        MOV CX, 18
-        loop_final12:
-            PUSH CX
+            check_hvd:
+            CALL check_horizontal        
+            CALL check_vertical            
+            CALL check_diagonal   
             
-            CALL jogada
-  
-            CALL check_horizontal
-        
-            CALL check_vertical
+            not_check:
+            INC [turn]
             
-            CALL check_diagonalv2   ;check_diagonalv1
+            CALL jogada           
+            INC [no_jogadas]
             
-            LEA BX, turn
-            MOV [BX], 1
-    
-            CALL jogada
-    
-            CALL check_horizontal
-        
-            CALL check_vertical
+            CMP [no_jogadas], 8
+            JGE check_hvd2
+            JMP not_check2
             
-            CALL check_diagonalv2   ;check_diagonalv1
+            check_hvd2:
+            CALL check_horizontal        
+            CALL check_vertical            
+            CALL check_diagonal
             
-            LEA BX, turn
-            MOV [BX], 0 
+            not_check2:            
+            DEC [turn]
             
-            POP CX     
-        LOOP loop_final12
+            MOV DL, [no_jogadas]
+            CMP DL, [jog_max]        
+        JNE loop1_2               
         
         CALL empate
 ;//////////////////////////////////////    
     p2_p1:            
-        MOV CX, 3
-        loop_inicial21:
-            PUSH CX
-            
+        loop2_1:
             CALL jogada
-   
-            LEA BX, turn
-            MOV [BX], 0
-    
+            INC [no_jogadas]
+            
+            CMP [no_jogadas], 7
+            JGE check_hvd3
+            JMP not_check3
+                         
+            check_hvd3:
+            CALL check_horizontal        
+            CALL check_vertical            
+            CALL check_diagonal
+            
+            not_check3:
+            DEC [turn]
+
             CALL jogada
- 
-            LEA BX, turn
-            MOV [BX], 1
+            INC [no_jogadas]
             
-            POP CX    
-        LOOP loop_inicial21
-        
-        MOV CX, 18
-        loop_final21:
-            PUSH CX
+            CMP [no_jogadas], 8
+            JGE check_hvd4
+            JMP not_check4
             
-            CALL jogada
-  
-            CALL check_horizontal
-        
-            CALL check_vertical
+            check_hvd4:
+            CALL check_horizontal        
+            CALL check_vertical            
+            CALL check_diagonal
             
-            CALL check_diagonalv2   ;check_diagonalv1
+            not_check4:
+            INC [turn]
             
-            LEA BX, turn
-            MOV [BX], 0
-    
-            CALL jogada
-    
-            CALL check_horizontal
-        
-            CALL check_vertical
-            
-            CALL check_diagonalv2   ;check_diagonalv1
-            
-            LEA BX, turn
-            MOV [BX], 1
-            
-            POP CX      
-        JMP loop_final21    
+            MOV DL, [no_jogadas]
+            CMP DL, [jog_max]   
+        JNE loop2_1 
     
         CALL empate
 ;////////////////////////////////// 
