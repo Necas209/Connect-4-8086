@@ -35,7 +35,7 @@ DEFINE_CLEAR_SCREEN
 
 include check.asm
 
-include interface.asm
+include interface79x24.asm  ;include interface80x25.asm
 
 include play.asm
 
@@ -48,8 +48,7 @@ start:
     
     MOV AL, [nc]
     MUL [nl]
-    LEA BX, jog_max
-    MOV [BX], AL
+    MOV [jog_max], AL
     
     CALL CLEAR_SCREEN
     
