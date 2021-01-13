@@ -22,7 +22,7 @@ check_diagonal PROC
     
     MOV AH, 0
     MOV AL, CH
-    MUL [nc]
+    MUL [nc]         ;dimensao maxima de nc
     MOV SI, AX       ; SI = offset de linha
     
     XOR BX, BX
@@ -163,7 +163,7 @@ check_vertical PROC
                 JE fim_do_jogo_v
             
             v_loop_end:
-                SUB SI, 7                    
+                SUB SI, nc[0]                    
         LOOP v_loop
             
     RET

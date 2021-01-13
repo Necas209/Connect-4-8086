@@ -1,4 +1,61 @@
 
+perguntar_dimensoes PROC
+    
+    GOTOXY 2, 2    
+    PRINTM "Dimensoes minimas: 5x5"
+     
+    GOTOXY 2, 4    
+    PRINTM "Dimensoes maximas: 9x9" 
+    
+    dim_nl:
+    GOTOXY 2, 6
+    PRINTM "Introduza o numero de linhas: "
+     
+    MOV AH, 1
+    INT 21h
+    
+    CMP AL, '5'
+    JL dim_nl_erro
+    
+    CMP AL, '9'
+    JG dim_nl_erro
+    
+    SUB AL, '0' 
+    MOV nl[0], AL
+    
+    GOTOXY 2, 10
+    PRINTM "                                 "
+    
+    dim_nc:
+    GOTOXY 2, 8
+    PRINTM "Introduza o numero de colunas: "
+    
+    MOV AH, 1
+    INT 21h
+    
+    CMP AL, '5'
+    JL dim_nc_erro
+    
+    CMP AL, '9'
+    JG dim_nc_erro
+    
+    SUB AL, '0'
+    MOV nc[0], AL
+    
+    RET
+    
+    dim_nl_erro:
+        GOTOXY 2, 10
+        PRINTM "Erro: numero de linhas invalido!"
+        JMP dim_nl
+    dim_nc_erro:
+        GOTOXY 2, 10 
+        PRINTM "Erro: numero de colunas invalido!"
+        JMP dim_nc
+    
+perguntar_dimensoes ENDP
+
+
 imprimir_nomes PROC
     
     GOTOXY 2, 14
@@ -17,14 +74,11 @@ imprimir_nomes PROC
 
 imprimir_nomes ENDP
 
-
 perguntar_nomes PROC
     
     GOTOXY 2, 2
     
-    MOV AH, 9
-    LEA DX, msg_ask_p1
-    INT 21h
+    PRINTM "Nome do jogador 1: " 
     
     LEA BX, p1_nome
     ADD BX, 16
@@ -33,9 +87,7 @@ perguntar_nomes PROC
     
     GOTOXY 2, 4
     
-    MOV AH, 9
-    LEA DX, msg_ask_p2
-    INT 21h
+    PRINTM "Nome do jogador 2: "
     
     LEA BX, p2_nome
     ADD BX, 16
@@ -119,7 +171,7 @@ imprimir_moldura PROC
         MOV CX, 15              
         
         m2: 
-            MOV ES:[0A1h+SI], 0000_1001b   ; mudar o tab. para azul
+            MOV ES:[9Fh+SI], 0000_1001b   ; mudar o tab. para azul 0A1h
             
             ADD SI, 2    
         LOOP m2
@@ -127,7 +179,7 @@ imprimir_moldura PROC
         POP SI
         POP CX 
         
-        ADD SI, 0A0h         
+        ADD SI, 9Eh ;0A0h        
     LOOP m1    
     
     RET

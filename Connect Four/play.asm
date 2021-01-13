@@ -10,49 +10,46 @@ jogada PROC
     JMP jogada_msg_p2
     
     jogada_msg_p1:
-        MOV AH, 9
-        LEA DX, msg_p1
-        INT 21h
-        
+        PRINTM "Jogador 1"         
         JMP jogada_aux
     
     jogada_msg_p2:
-        MOV AH, 9
-        LEA DX, msg_p2
-        INT 21h
+        PRINTM "Jogador 2"
     
     jogada_aux:    
         GOTOXY 20, 4
     
-    MOV AH, 9
-    LEA DX, msg_jogada
-    INT 21h
+    PRINTM "Indique a coluna: "
     
     MOV AH, 1
     INT 21h
     
-    CMP AL, "1"
+    SUB AL, '0'
+    
+    CMP AL, 1
     JL jog_erro
     
-    CMP AL, "7"
+    CMP AL, nc[0]
     JG jog_erro
     
-    SUB AL, "1"
+    SUB AL, 1
     MOV AH, 0
     MOV BX, AX      ; offset dentro da linha, ou seja, a coluna
     
     MOV SI, 0
     
+    MOV CX, w.[nl]
     loop_jog:
-        CMP SI, 42
-        JE jog_erro
+            
+        CMP [linha1+BX+SI], ' '
+        JE jog_cont
         
-        ADD SI, 7  
-        
-        CMP [linha1+BX+SI-7], ' '
-    JNE loop_jog
+        ADD SI, [nc]
+    LOOP loop_jog
     
-    LEA DI, [linha1+BX+SI-7]
+    JMP jog_erro
+    
+    jog_cont:
     
     CALL coord
     
@@ -62,12 +59,12 @@ jogada PROC
     JMP jogada_p2
     
     jogada_p1:
-        MOV [DI], 1
+        MOV [linha1+BX+SI], 1
         
         JMP fim_jogada
     
     jogada_p2:
-        MOV [DI], 2
+        MOV [linha1+BX+SI], 2
     
     fim_jogada:
         CALL atualizar_tabuleiro
@@ -75,8 +72,8 @@ jogada PROC
         RET
         
     jog_erro:
-        CALL erro
-        
+        GOTOXY 20, 4    
+        PRINTM "Erro."
         JMP jog                                                      
      
 jogada ENDP                                                      
@@ -85,10 +82,8 @@ jogada ENDP
 empate PROC
     
     GOTOXY 20, 8
-    
-    LEA DX, msg_empate
-    MOV AH, 9
-    INT 21h
+       
+    PRINTM "O jogo terminou em empate!"
     
     MOV AX, 4C00h
     INT 21h
@@ -105,18 +100,13 @@ FIM_DO_JOGO PROC
     
     JMP fim_2
     
-    fim_1:
-        LEA DX, msg_fim_1
-        MOV AH, 9
-        INT 21h
-    
-    JMP fim_g
+    fim_1:          
+        PRINTM "O jogo terminou! O jogador 1 ganhou."    
+        JMP fim_g
     
     fim_2:
-        LEA DX, msg_fim_2
-        MOV AH, 9
-        INT 21h
-    
+        PRINTM "O jogo terminou! O jogador 2 ganhou."
+            
     fim_g: 
         MOV AX, 4C00h
         INT 21h
@@ -126,33 +116,16 @@ FIM_DO_JOGO PROC
 FIM_DO_JOGO ENDP
    
    
-coord PROC
-
-    MOV AX, SI
+coord PROC                             ; DI = linha1 + BX + SI
     
-    LEA BP, last_position
+    MOV last_position[0], BL           ; x = BL (pois BH = 0)
     
-    MOV [BP], BL             ; x = BL (pois BH = 0)
+    MOV AX, SI                            
+    MOV BL, nc[0]               
+    DIV BL                             ; AX = AL = n.o linha (pois AH = 0)
     
-    SUB AX, 7                ; AX = SI -7
-    MOV BL, 7               
-    DIV BL                   ; AX = AL = n.o linha (pois AH = 0)
-    
-    MOV [BP+1], AL           ; y = AL 
+    MOV last_position[1], AL           ; y = AL 
     
     RET
     
 coord ENDP
-
-
-erro PROC
-
-    GOTOXY 20, 4
-    
-    MOV AH, 9
-    LEA DX, msg_erro
-    INT 21h
-    
-    RET
-
-erro ENDP

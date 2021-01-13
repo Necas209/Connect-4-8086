@@ -1,4 +1,3 @@
-include emu8086.inc
 
 name "Connect Four"
 
@@ -19,35 +18,24 @@ JMP start
 
     turn DB " "      ; vez do jogador: 0 -> p1, 1 -> p2
     
-    nc DB 7, 0
-    nl DB 6, 0
-    
-    msg_p1 DB "Jogador 1$"
-    msg_p2 DB "Jogador 2$" 
-    msg_jogada DB "Indique a coluna: $"
+    nc DB 0, 0
+    nl DB 0, 0
     
     p1_nome DB "Jogador 1 (",1,") -           $"
     p2_nome DB "Jogador 2 (",2,") -           $"
-    msg_ask_p1 DB "Nome do jogador 1: $"
-    msg_ask_p2 DB "Nome do jogador 2: $"
-    
-    msg_fim_1 DB "O jogo terminou! O jogador 1 ganhou.$"
-    msg_fim_2 DB "O jogo terminou! O jogador 2 ganhou.$"
-    
-    msg_empate DB "O jogo terminou em empate!$"
-    
-    msg_erro DB "Erro.$"
-    
+   
     last_position DB 2 DUP(-1)     ; posicao da ultima peca colocada    
     
     no_jogadas DB 0
     jog_max DB 0
+
+include macros.inc
     
 DEFINE_CLEAR_SCREEN
 
 include check.asm
 
-include interface79x24.asm  ;include interface80x25.asm
+include interface.asm
 
 include play.asm
 
@@ -55,11 +43,15 @@ start:
     
     MOV AX, 0B800h
     MOV ES, AX
-	
-	MOV AL, [nc]
+    
+    CALL perguntar_dimensoes
+    
+    MOV AL, [nc]
     MUL [nl]
     LEA BX, jog_max
     MOV [BX], AL
+    
+    CALL CLEAR_SCREEN
     
     CALL perguntar_nomes
     
