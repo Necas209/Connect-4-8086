@@ -35,7 +35,7 @@ DEFINE_CLEAR_SCREEN
 
 include check.asm
 
-include interface79x24.asm  ;include interface80x25.asm
+include interface.asm  ;include interface80x25.asm
 
 include play.asm
 

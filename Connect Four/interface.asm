@@ -198,10 +198,10 @@ atualizar_tabuleiro PROC
     MOV AL, last_position[1]
     MOV BL, 2
     MUL BL
-    MOV BL, 11
-    SUB BL, AL
+    MOV CH, 11
+    SUB CH, AL
     
-    GOTOXY CL, BL
+    GOTOXY CL, CH     ;2x+1 2*nl-(2y+1)
         
     MOV AL, turn[0]
     INC AL

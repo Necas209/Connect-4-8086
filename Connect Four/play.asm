@@ -32,7 +32,7 @@ jogada PROC
     CMP AL, nc[0]
     JG jog_erro
     
-    SUB AL, 1
+    DEC AL
     MOV AH, 0
     MOV BX, AX      ; offset dentro da linha, ou seja, a coluna
     
@@ -44,13 +44,14 @@ jogada PROC
         CMP [linha1+BX+SI], ' '
         JE jog_cont
         
-        ADD SI, [nc]
+        ADD SI, w.[nc]
     LOOP loop_jog
     
     JMP jog_erro
     
     jog_cont:
     
+    LEA DI, [linha1+BX+SI]
     CALL coord
     
     CMP turn[0], 0
@@ -59,12 +60,12 @@ jogada PROC
     JMP jogada_p2
     
     jogada_p1:
-        MOV [linha1+BX+SI], 1
+        MOV [DI], 1
         
         JMP fim_jogada
     
     jogada_p2:
-        MOV [linha1+BX+SI], 2
+        MOV [DI], 2
     
     fim_jogada:
         CALL atualizar_tabuleiro
@@ -72,7 +73,7 @@ jogada PROC
         RET
         
     jog_erro:
-        GOTOXY 20, 4    
+        GOTOXY 20, 6    
         PRINTM "Erro."
         JMP jog                                                      
      

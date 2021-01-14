@@ -163,7 +163,7 @@ check_vertical PROC
                 JE fim_do_jogo_v
             
             v_loop_end:
-                SUB SI, nc[0]                    
+                SUB SI, w.[nc]                    
         LOOP v_loop
             
     RET
