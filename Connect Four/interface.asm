@@ -171,7 +171,7 @@ imprimir_moldura PROC
         MOV CX, 15              
         
         m2: 
-            MOV ES:[9Fh+SI], 0000_1001b   ; mudar o tab. para azul 0A1h
+            MOV ES:[0A1h+SI], 0000_1001b   ; mudar o tab. para azul 09Fh
             
             ADD SI, 2    
         LOOP m2
@@ -179,7 +179,7 @@ imprimir_moldura PROC
         POP SI
         POP CX 
         
-        ADD SI, 9Eh ;0A0h        
+        ADD SI, 0A0h ;09Eh        
     LOOP m1    
     
     RET

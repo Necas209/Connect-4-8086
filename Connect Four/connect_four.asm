@@ -44,6 +44,8 @@ start:
     MOV AX, 0B800h
     MOV ES, AX
     
+    CALL CLEAR_SCREEN
+    
     CALL perguntar_dimensoes
     
     MOV AL, [nc]
