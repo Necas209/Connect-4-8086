@@ -58,13 +58,13 @@ perguntar_dimensoes ENDP
 
 imprimir_nomes PROC
     
-    GOTOXY 2, 14
+    GOTOXY 20, 14
     
     LEA DX, p1_nome
     MOV AH, 9
     INT 21h
     
-    GOTOXY 2, 16
+    GOTOXY 20, 16
     
     LEA DX, p2_nome
     MOV AH, 9
@@ -125,83 +125,217 @@ ler_nome ENDP
 
 
 imprimir_moldura PROC
+
+    MOV DH, 1     ;linha
+    MOV DL, 0     ;coluna
     
-    MOV BL, 1    
-    MOV CX, 5
+    MOV CX, w.[nl]
     
-    c1:         
-        GOTOXY 0, BL
+    c1:                    ; verticais por linha
+        PUSH CX
+        MOV CX, w.[nc]
+        INC CX
+        c1_1:              ; verticais numa so linha
+        PUSH CX
         
-        LEA DX, frame4
+        MOV BH, 0
+	    MOV AH, 2
+	    INT 10h
+	    
         MOV AH, 9
-        INT 21h
+        MOV AL, 186
+        MOV BH, 0
+        MOV BL, 0000_1001b
+        MOV CX, 1
+        INT 10h
         
-        INC BL
-        
-        GOTOXY 0, BL
-        
-        LEA DX, frame2
-        MOV AH, 9
-        INT 21h
-        
-        INC BL        
+        ADD DL, 2         
+        POP CX
+        LOOP c1_1
+        ADD DH, 2
+        MOV DL, 0
+        POP CX
     LOOP c1
     
-    GOTOXY 0, BL
+    MOV DH, 2     ;linha
+    MOV DL, 0     ;coluna
     
-    LEA DX, frame4
-    MOV AH, 9
-    INT 21h
+    MOV CX, w.[nl]
+    DEC CX
     
-    INC BL
+    c2:               
     
-    GOTOXY 0, BL
+    PUSH CX
     
-    LEA DX, frame3
-    MOV AH, 9
-    INT 21h
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+	MOV AH, 9
+    MOV AL, 204         ;extremo esquerdo
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h 
     
-    MOV SI, 0    
-    MOV CX, 13
     
-    m1: 
+    MOV CX, w.[nc]
+    DEC CX 
+    
+    c2_1:              ; intermedios
         PUSH CX
-        PUSH SI
-        
-        MOV CX, 15              
-        
-        m2: 
-            MOV ES:[0A1h+SI], 0000_1001b   ; mudar o tab. para azul 09Fh
-            
-            ADD SI, 2    
-        LOOP m2
-        
-        POP SI
+     
+        INC DL
+        MOV BH, 0
+	    MOV AH, 2
+	    INT 10h
+	
+        MOV AH, 9
+        MOV AL, 205
+        MOV BH, 0
+        MOV BL, 0000_1001b
+        MOV CX, 1
+        INT 10h
+    
+        INC DL
+        MOV BH, 0
+	    MOV AH, 2
+	    INT 10h
+	
+        MOV AH, 9
+        MOV AL, 206
+        MOV BH, 0
+        MOV BL, 0000_1001b
+        MOV CX, 1
+        INT 10h 
+    
         POP CX 
+    LOOP c2_1
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 205
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 185
+    MOV BH, 0
+    MOV BL, 0000_1001b     ;extremo direito
+    MOV CX, 1
+    INT 10h
+    
+    MOV DL, 0
+    ADD DH, 2
+    
+    POP CX
+    LOOP c2
+    
+    
+    ; DH = ultima linha por causa do loop c2
+    MOV DL, 0     ;coluna
+
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 200
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
         
-        ADD SI, 0A0h ;09Eh        
-    LOOP m1    
+    MOV CX, w.[nc]
+    DEC CX
+    
+    c3:
+    PUSH CX
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 205
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 202
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
+    
+    POP CX
+    LOOP c3
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 205
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
+    
+    INC DL
+    MOV BH, 0
+	MOV AH, 2
+	INT 10h
+	
+    MOV AH, 9
+    MOV AL, 188
+    MOV BH, 0
+    MOV BL, 0000_1001b
+    MOV CX, 1
+    INT 10h
     
     RET
-
+    
 imprimir_moldura ENDP
 
 
 atualizar_tabuleiro PROC
     
-    MOV AL, last_position[0]    
+    MOV AL, last_position[0]  ;2x+1 = x da peca na consola 
     MOV BL, 2
     MUL BL    
     ADD AL, 1
     MOV CL, AL
     
-    MOV AL, last_position[1]
+    MOV AL, last_position[1]  ;2*nl-(2y+1) = y da peca na consola
     MOV BL, 2
     MUL BL
-    MOV CH, 11
+    INC AL
+    MOV CH, [nl]
+    ADD CH, [nl]
     SUB CH, AL
     
-    GOTOXY CL, CH     ;2x+1 2*nl-(2y+1)
+    GOTOXY CL, CH   ;(x,y) da peca na consola   
         
     MOV AL, turn[0]
     INC AL
