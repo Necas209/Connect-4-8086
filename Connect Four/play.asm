@@ -17,10 +17,12 @@ jogada PROC
         PRINTM "Jogador 2"
 
     jogada_aux:
+        ;GOTOXY 38, 4
+        ;PUTC ' '
         GOTOXY 20, 4
-
+ 
     PRINTM "Indique a coluna: "
-
+    
     MOV AH, 1
     INT 21h
 

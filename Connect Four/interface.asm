@@ -125,7 +125,18 @@ ler_nome ENDP
 
 
 imprimir_moldura PROC
+    
+    MOV CX, w.[nc]
 
+    c0:
+    MOV AL, [nc]
+    ADD AL, '0'
+    SUB AL, CL
+    INC AL
+    PUTC ' '
+    PUTC AL
+    LOOP c0
+    
     MOV DH, 1     ;linha
     MOV DL, 0     ;coluna
     
