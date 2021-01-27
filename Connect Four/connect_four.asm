@@ -5,8 +5,7 @@ ORG 100h
 
 JMP start
 
-    tabuleiro DB 81 DUP(' ')           ; 1 -> pecas do p1
-                                    ; 2 -> pecas do p2
+    tabuleiro DB 81 DUP(' ')     ; 1 -> pecas do p1 & 2 -> pecas do p2
 
     turn DB " "      ; vez do jogador: 0 -> p1, 1 -> p2
 
@@ -22,19 +21,16 @@ JMP start
     jog_max DB 0
 
 include macros.inc
-    
+
 DEFINE_CLEAR_SCREEN
 
 include check.asm
 
-include interface.asm  ;include interface80x25.asm
+include interface.asm
 
 include play.asm
 
 start:
-
-    MOV AX, 0B800h
-    MOV ES, AX
 
     CALL CLEAR_SCREEN
 
