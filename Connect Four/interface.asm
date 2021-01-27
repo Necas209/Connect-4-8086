@@ -346,8 +346,15 @@ atualizar_tabuleiro PROC
     ADD CH, [nl]
     SUB CH, AL
     
-    GOTOXY CL, CH   ;(x,y) da peca na consola   
-        
+    MOV BL, 1
+    
+    anim:
+    
+    GOTOXY CL, BL
+    
+    PUSH CX
+    PUSH BX
+    
     MOV AL, turn[0]
     INC AL
     
@@ -367,6 +374,25 @@ atualizar_tabuleiro PROC
     MOV CX, 1 
     INT 10h
     
+    MOV CX, 5      
+    MOV DX, 5730h  ;55730h = 350.000 micros = 0.35 s
+    MOV AH, 86h    ;WAIT.
+    INT 15h 
+    
+    POP BX
+    POP CX 
+    
+    CMP BL, CH
+    JE fim_anim
+    
+    GOTOXY CL, BL
+    PUTC ' '
+    
+    ADD BL, 2 
+    JMP anim   
+    
+    fim_anim:
+     
     RET
     
 atualizar_tabuleiro ENDP

@@ -1,0 +1,1 @@
+"Sugerimos que o programa seja executado na DOSBox por questões de desempenho."
