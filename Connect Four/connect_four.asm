@@ -77,7 +77,10 @@ start:
 
             not_check:
             INC [turn]
-
+            MOV DL, [no_jogadas]
+            CMP DL, [jog_max]
+            JE empate1
+            
             CALL jogada
             INC [no_jogadas]
 
@@ -96,7 +99,8 @@ start:
             MOV DL, [no_jogadas]
             CMP DL, [jog_max]
         JNE loop1_2
-
+        
+        empate1:
         CALL empate
 ;//////////////////////////////////////
     p2_p1:
@@ -115,7 +119,10 @@ start:
 
             not_check3:
             DEC [turn]
-
+            MOV DL, [no_jogadas]
+            CMP DL, [jog_max]
+            JE empate2
+            
             CALL jogada
             INC [no_jogadas]
 
@@ -134,7 +141,8 @@ start:
             MOV DL, [no_jogadas]
             CMP DL, [jog_max]
         JNE loop2_1
-
+        
+        empate2:
         CALL empate
 ;//////////////////////////////////
 
