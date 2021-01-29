@@ -1,4 +1,44 @@
 
+imprimir_titulo PROC
+    
+    GOTOXY 5, 5
+    LEA DX, title1
+    MOV AH, 9 
+    INT 21h
+    
+    GOTOXY 5, 6
+    LEA DX, title2
+    MOV AH, 9 
+    INT 21h
+    
+    GOTOXY 5, 7
+    LEA DX, title3
+    MOV AH, 9 
+    INT 21h
+    
+    GOTOXY 5, 8
+    LEA DX, title4
+    MOV AH, 9 
+    INT 21h
+    
+    GOTOXY 5, 9
+    LEA DX, title5
+    MOV AH, 9 
+    INT 21h
+    
+    GOTOXY 5, 12
+    PRINTM "Carregue numa tecla para continuar..."
+    
+    MOV AH, 7
+    INT 21h
+    
+    CALL CLEAR_SCREEN
+    
+    RET
+    
+imprimir_titulo ENDP
+
+
 perguntar_dimensoes PROC
     
     GOTOXY 2, 2    

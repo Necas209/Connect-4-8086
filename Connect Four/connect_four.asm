@@ -4,7 +4,14 @@ name "Connect Four"
 ORG 100h
 
 JMP start
-
+    
+    
+    title1 DB "||  ||    ||||||  ||\\  //||    ||      ||||||  |\   ||  ||  ||  ||||||$"
+    title2 DB "||  ||    ||      || \\// ||    ||        ||    ||\  ||  ||  ||  ||  ||$"
+    title3 DB "||||||    ||||||  ||  \/  ||    ||        ||    ||\\ ||  ||||||  ||||||$"
+    title4 DB "    ||    ||      ||      ||    ||        ||    || \\||  ||  ||  ||  ||$"
+    title5 DB "    ||    ||||||  ||      ||    ||||||  ||||||  ||  \\|  ||  ||  ||  ||$"
+             
     tabuleiro DB 81 DUP(' ')     ; 1 -> pecas do p1 & 2 -> pecas do p2
 
     turn DB " "      ; vez do jogador: 0 -> p1, 1 -> p2
@@ -33,7 +40,9 @@ include play.asm
 start:
 
     CALL CLEAR_SCREEN
-
+    
+    CALL imprimir_titulo
+    
     CALL perguntar_dimensoes
 
     MOV AL, [nc]
