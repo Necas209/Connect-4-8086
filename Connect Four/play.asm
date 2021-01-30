@@ -95,6 +95,11 @@ empate PROC
 
     PRINTM "O jogo terminou em empate!"
 
+    MOV CX, 001Eh      
+    MOV DX, 8480h ;1E8480h = 2.000.000 micros = 2.0 s
+    MOV AH, 86h    ;WAIT.
+    INT 15h
+            
     MOV AX, 4C00h
     INT 21h
 
@@ -118,6 +123,11 @@ FIM_DO_JOGO PROC
         PRINTM "O jogo terminou! O jogador 2 ganhou."
 
     fim_g:
+        MOV CX, 001Eh      
+        MOV DX, 8480h ;1E8480h = 2.000.000 micros = 2.0 s
+        MOV AH, 86h    ;WAIT.
+        INT 15h
+        
         MOV AX, 4C00h
         INT 21h
 
