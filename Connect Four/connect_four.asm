@@ -24,8 +24,7 @@ JMP start
 
     last_position DB 2 DUP(-1)    ; posicao da ultima peca colocada
 
-    no_jogadas DB 0
-    jog_max DB 0
+    jog_max DB 0, 0
 
 include macros.inc
 
@@ -61,98 +60,21 @@ start:
 
     CALL RANDSTART  ;escolhe ordem dos jogadores
 
-    LEA BX, turn    ;guarda a vez ("turn")
-    MOV [BX], DL
-
-    CMP DL, 0       ;turn=0 => p1 seguido de p2
-    JE p1_p2
-
-    CMP DL, 1       ;turn=1 => p2 seguido de p1
-    JE p2_p1
-;////////////////////////////////////
-    p1_p2:
-       loop1_2:
-            CALL jogada
-            INC [no_jogadas]
-
-            CMP [no_jogadas], 7
-            JGE check_hvd
-            JMP not_check
-
-            check_hvd:
-            CALL check_horizontal
-            CALL check_vertical
-            CALL check_diagonal
-
-            not_check:
-            INC [turn]
-            MOV DL, [no_jogadas]
-            CMP DL, [jog_max]
-            JE empate1
-            
-            CALL jogada
-            INC [no_jogadas]
-
-            CMP [no_jogadas], 8
-            JGE check_hvd2
-            JMP not_check2
-
-            check_hvd2:
-            CALL check_horizontal
-            CALL check_vertical
-            CALL check_diagonal
-
-            not_check2:
-            DEC [turn]
-
-            MOV DL, [no_jogadas]
-            CMP DL, [jog_max]
-        JNE loop1_2
+    MOV CX, w.[jog_max]
+    
+    loop_jogo:
+        PUSH CX
+    
+        CALL jogada
         
-        empate1:
-        CALL empate
-;//////////////////////////////////////
-    p2_p1:
-        loop2_1:
-            CALL jogada
-            INC [no_jogadas]
-
-            CMP [no_jogadas], 7
-            JGE check_hvd3
-            JMP not_check3
-
-            check_hvd3:
-            CALL check_horizontal
-            CALL check_vertical
-            CALL check_diagonal
-
-            not_check3:
-            DEC [turn]
-            MOV DL, [no_jogadas]
-            CMP DL, [jog_max]
-            JE empate2
-            
-            CALL jogada
-            INC [no_jogadas]
-
-            CMP [no_jogadas], 8
-            JGE check_hvd4
-            JMP not_check4
-
-            check_hvd4:
-            CALL check_horizontal
-            CALL check_vertical
-            CALL check_diagonal
-
-            not_check4:
-            INC [turn]
-
-            MOV DL, [no_jogadas]
-            CMP DL, [jog_max]
-        JNE loop2_1
+        CALL check_horizontal
+        CALL check_vertical
+        CALL check_diagonal
         
-        empate2:
-        CALL empate
+        POP CX
+    LOOP loop_jogo
+    
+    CALL empate
 ;//////////////////////////////////
 
 
@@ -165,7 +87,8 @@ RANDSTART:          ; gera numero aleatorio entre 0 e 1
    XOR  DX, DX
    MOV  CX, 2
    DIV  CX
-
+   
+   MOV [turn], DL  ;guarda a vez ("turn")
 RET
 
 END
