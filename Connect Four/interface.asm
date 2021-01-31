@@ -113,7 +113,8 @@ imprimir_nomes PROC
     RET
 
 imprimir_nomes ENDP
-
+  
+  
 perguntar_nomes PROC
     
     GOTOXY 2, 2
@@ -388,9 +389,9 @@ atualizar_tabuleiro PROC
     
     MOV BL, 1
     
-    anim:
+    anim:   ;animacao da peca a cair
     
-    GOTOXY CL, BL
+    GOTOXY CL, BL  ; (x,1) -> (x,y)
     
     PUSH CX
     PUSH BX

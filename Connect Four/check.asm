@@ -1,13 +1,13 @@
 
 check_diagonal PROC
 
-    MOV CL, last_position[0]         ;diagonal \
+    MOV CL, last_position[0]        
     MOV CH, last_position[1]
 
     MOV DH, [nl]
-    DEC DH           ;nl-1 pois {0...nl-1}
+    DEC DH           ; nl-1 pois {0...nl-1}
     MOV DL, [nc]
-    DEC DL           ;nc-1 pois {0...nc-1}
+    DEC DL           ; nc-1 pois {0...nc-1}
 
     test_loop:
         CMP CL, DL
@@ -22,7 +22,7 @@ check_diagonal PROC
 
     MOV AH, 0
     MOV AL, CH
-    MUL [nc]         ;dimensao maxima de nc
+    MUL [nc]         ; dimensao maxima de nc
     MOV SI, AX       ; SI = offset de linha
 
     XOR BX, BX
@@ -32,7 +32,7 @@ check_diagonal PROC
     INC AL
     MOV AH, 0
 
-    left_right:
+    left_right:                   ; diagonal \
         CMP [tabuleiro+BX+SI], AL
         JE left_right_cont
 
@@ -63,7 +63,7 @@ check_diagonal PROC
 
     CALL FIM_DO_JOGO
 
-    left_right_cont3:     ;diagonal /
+    left_right_cont3:
 
     MOV CL, last_position[0]
     MOV CH, last_position[1]
@@ -77,7 +77,7 @@ check_diagonal PROC
         DEC CH
     JMP test2_loop
 
-    test2_cont:
+    test2_cont:      ; (CL,CH) = ultima posicao da diagonal
 
     MOV AH, 0
     MOV AL, CH
@@ -91,7 +91,7 @@ check_diagonal PROC
     INC AL
     MOV AH, 0
 
-    right_left:
+    right_left:                   ; diagonal /
         CMP [tabuleiro+BX+SI], AL
         JE right_left_cont
 
@@ -143,9 +143,9 @@ check_vertical PROC
         MUL [nc]
         MOV SI, AX
 
-        ;AH = 0 => contador de pecas
+        ; AH = 0 => contador de pecas
         MOV AL, turn[0]
-        INC AL                   ;AL = peca
+        INC AL                   ; AL = peca
 
         MOV BL, last_position[0]
         MOV BH, 0

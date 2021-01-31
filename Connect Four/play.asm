@@ -80,10 +80,12 @@ jogada PROC
     jog_erro:
         GOTOXY 20, 6
         PRINTM "Erro."
+        
         MOV CX, 7      
         MOV DX, 0A120h ;7A120h = 500.000 micros = 0.5 s
         MOV AH, 86h    ;WAIT.
         INT 15h
+        
         JMP jog
 
 jogada ENDP

@@ -1,5 +1,5 @@
 
-name "Connect Four"
+name "4 Em Linha"
 
 ORG 100h
 
@@ -14,7 +14,7 @@ JMP start
              
     tabuleiro DB 81 DUP(' ')     ; 1 -> pecas do p1 & 2 -> pecas do p2
 
-    turn DB " "      ; vez do jogador: 0 -> p1, 1 -> p2
+    turn DB " "                  ; vez do jogador: 0 -> p1, 1 -> p2
 
     nc DB 0, 0
     nl DB 0, 0
@@ -22,7 +22,7 @@ JMP start
     p1_nome DB "Jogador 1 (",1,") -           $"
     p2_nome DB "Jogador 2 (",2,") -           $"
 
-    last_position DB 2 DUP(-1)     ; posicao da ultima peca colocada
+    last_position DB 2 DUP(-1)    ; posicao da ultima peca colocada
 
     no_jogadas DB 0
     jog_max DB 0
