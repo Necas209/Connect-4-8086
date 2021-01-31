@@ -71,6 +71,17 @@ start:
         CALL check_vertical
         CALL check_diagonal
         
+        CMP [turn], 0
+        JE p2
+        
+        DEC [turn]
+        JMP cont_loop_jogo
+        
+        p2:
+            INC [turn]
+        
+        cont_loop_jogo:
+        
         POP CX
     LOOP loop_jogo
     

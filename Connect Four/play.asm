@@ -74,18 +74,8 @@ jogada PROC
 
     fim_jogada:
         CALL atualizar_tabuleiro
-    
-        CMP [turn], 0
-        JE p2
-        
-        DEC [turn]
-        JMP fim_play
-        
-        p2:
-            INC [turn]
-        
-        fim_play:
-            RET
+       
+        RET
 
     jog_erro:
         GOTOXY 20, 6
