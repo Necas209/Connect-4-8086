@@ -1,7 +1,7 @@
-trabalho final
+Final Project for 'Computer Architecture'
 
-Arquitetura de Computadores
+«Connect 4», 
 
-assembly
+developed in assembly x86, 
 
-emu8086
+with the help of emu8086 and MS-DOS tools.
