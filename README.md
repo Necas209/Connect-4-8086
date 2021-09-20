@@ -4,4 +4,4 @@ Final Project for 'Computer Architecture'
 
 developed in assembly x86, 
 
-with the help of emu8086 and MS-DOS tools.
+with the help of emu8086 and DOSBox tools.
